@@ -23,17 +23,17 @@ The library stores elements of any data type using `void *` and keeps track of t
 
 | Operation | Complexity |
 |-----------|------------|
-| push_back | O(1) amortized |
-| pop_back | O(1) |
-| at | O(1) |
-| front | O(1) |
-| back | O(1) |
-| insert | O(n) |
-| erase | O(n) |
-| reserve | O(n) |
-| resize | O(n) (if reallocation occurs) |
-| clear | O(1) |
-| shrink_to_fit | O(n) |
+| vector_push_back | O(1) amortized |
+| vector_pop_back | O(1) |
+| vector_at | O(1) |
+| vector_front | O(1) |
+| vector_back | O(1) |
+| vector_insert | O(n) |
+| vector_erase | O(n) |
+| vector_reserve | O(n) |
+| vector_resize | O(n) (if reallocation occurs) |
+| vector_clear | O(1) |
+| vector_shrink_to_fit | O(n) |
 
 ---
 ## Error Codes
@@ -50,7 +50,7 @@ The library stores elements of any data type using `void *` and keeps track of t
 | VECTOR_ERROR_OVERFLOW | Integer overflow detected |
 
 ---
-# Detailed Functionalites
+# Detailed Functionalities
 
 ## vector_create
 
@@ -64,7 +64,7 @@ Creates a new vector capable of storing objects of size `element_size`.
 
 | Name | Description |
 |------|-------------|
-| element_size | Size of one element in bytes |
+| element_size | Size of one element in bytes. |
 
 ### Returns
 
@@ -91,7 +91,7 @@ Releases all memory owned by the vector.
 
 | Name | Description |
 |------|-------------|
-| vec | Pointer to the vector |
+| vec | Pointer to the vector. |
 
 > **NOTE:** Passing a `NULL` pointer is safe and has no effect.
 
@@ -118,7 +118,7 @@ Returns the number of elements currently stored in the vector.
 
 | Name | Description |
 |------|-------------|
-| vec | Pointer to the vector |
+| vec | Pointer to the vector. |
 
 ### Returns
 
@@ -134,44 +134,137 @@ size_t size = vector_size(vec);
 ---
 ## vector_capacity
 
-Returns the current allocated capacity.
-
 ```c
-size_t cap = vector_capacity(vec);
+size_t vector_capacity(const Vector *vec);
 ```
 
+Returns the current allocated capacity of the vector.
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `vec` | Pointer to the vector. |
+
+### Returns
+
+- The current capacity of the vector.
+- Returns `0` if `vec` is `NULL`.
+
+### Example
+
+```c
+size_t capacity = vector_capacity(vec);
+```
 ---
 ## vector_element_size
 
-Returns the size of one stored element.
+```c
+size_t vector_element_size(const Vector *vec);
+```
+
+Returns the size, in bytes, of each element stored in the vector.
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `vec` | Pointer to the vector. |
+
+### Returns
+
+- The size of each element, in bytes.
+- Returns `0` if `vec` is `NULL`.
+
+### Example
 
 ```c
-size_t bytes = vector_element_size(vec);
+size_t element_size = vector_element_size(vec);
 ```
 
 ---
 ## vector_empty
 
-Returns
+```c
+int vector_empty(const Vector *vec);
+```
 
-- `1` if empty
-- `0` otherwise
-- error code on invalid vector
+Checks whether the vector contains any elements.
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `vec` | Pointer to the vector. |
+
+### Returns
+
+| Value | Description |
+|------|-------------|
+| `1` | The vector is empty. |
+| `0` | The vector contains one or more elements. |
+| `VECTOR_ERROR_NULL_POINTER` | `vec` is `NULL`. |
+
+### Example
+
+```c
+if (vector_empty(vec) == 1) {
+    printf("Vector is empty.\n");
+}
+```
 
 ---
 ## vector_full
 
-Returns
+```c
+int vector_full(const Vector *vec);
+```
 
-- `1` if size equals capacity
-- `0` otherwise
+Checks whether the vector has reached its allocated capacity.
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `vec` | Pointer to the vector. |
+
+### Returns
+
+| Value | Description |
+|------|-------------|
+| `1` | The vector is full. |
+| `0` | The vector has available capacity. |
+| `VECTOR_ERROR_NULL_POINTER` | `vec` is `NULL`. |
+
+### Example
+
+```c
+if (vector_full(vec) == 1) {
+    printf("Vector is full.\n");
+}
+```
 
 ---
 ## vector_front
 
-Returns a pointer to the first element.
+```c
+void *vector_front(const Vector *vec);
+```
 
-Returns `NULL` if the vector is empty.
+Returns a pointer to the first element in the vector.
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `vec` | Pointer to the vector. |
+
+### Returns
+
+- A pointer to the first element in the vector.
+- Returns `NULL` if `vec` is `NULL` or the vector is empty.
+
+### Example
 
 ```c
 int first = *(int *)vector_front(vec);
@@ -180,16 +273,51 @@ int first = *(int *)vector_front(vec);
 ---
 ## vector_back
 
-Returns a pointer to the last element.
+```c
+void *vector_back(const Vector *vec);
+```
 
-Returns `NULL` if the vector is empty.
+Returns a pointer to the last element in the vector.
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `vec` | Pointer to the vector. |
+
+### Returns
+
+- A pointer to the last element in the vector.
+- Returns `NULL` if `vec` is `NULL` or the vector is empty.
+
+### Example
+
+```c
+int last = *(int *)vector_back(vec);
+```
 
 ---
 ## vector_at
 
-Returns a pointer to the element at the specified position.
+```c
+void *vector_at(const Vector *vec, size_t pos);
+```
 
-Returns `NULL` if the index is invalid.
+Returns a pointer to the element at the specified position in the vector.
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `vec` | Pointer to the vector. |
+| `pos` | Zero-based index of the element to access. |
+
+### Returns
+
+- A pointer to the element at the specified position.
+- Returns `NULL` if `vec` is `NULL` or `pos` is out of bounds.
+
+### Example
 
 ```c
 int value = *(int *)vector_at(vec, 4);
@@ -198,80 +326,231 @@ int value = *(int *)vector_at(vec, 4);
 ---
 ## vector_push_back
 
+```c
+int vector_push_back(Vector *vec, const void *data);
+```
+
 Appends an element to the end of the vector.
 
-Automatically doubles the capacity if necessary.
+If the vector has reached its allocated capacity, the capacity is automatically increased before the element is inserted.
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `vec` | Pointer to the vector. |
+| `data` | Pointer to the element to be copied into the vector. |
 
 ### Returns
 
-`VECTOR_SUCCESS` on success.
+| Value | Description |
+|------|-------------|
+| `VECTOR_SUCCESS` | The element was appended successfully. |
+| `VECTOR_ERROR_NULL_POINTER` | `vec` is `NULL`. |
+| `VECTOR_ERROR_INVALID_DATA` | `data` is `NULL`. |
+| `VECTOR_ERROR_OUT_OF_MEMORY` | Memory allocation failed while expanding the vector. |
+| `VECTOR_ERROR_OVERFLOW` | Increasing the vector's capacity would cause an integer overflow. |
 
 ### Example
 
 ```c
-int x = 42;
-vector_push_back(vec, &x);
+int value = 42;
+vector_push_back(vec, &value);
 ```
 
 ---
 ## vector_pop_back
 
-Removes the last element.
+```c
+int vector_pop_back(Vector *vec);
+```
 
-Does not reduce capacity.
+Removes the last element from the vector.
 
-Returns an error if the vector is empty.
+This operation decreases the size of the vector by one but does not reduce its allocated capacity.
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `vec` | Pointer to the vector. |
+
+### Returns
+
+| Value | Description |
+|------|-------------|
+| `VECTOR_SUCCESS` | The last element was removed successfully. |
+| `VECTOR_ERROR_NULL_POINTER` | `vec` is `NULL`. |
+| `VECTOR_ERROR_EMPTY` | The vector is empty. |
+
+### Example
+
+```c
+if (vector_pop_back(vec) == VECTOR_SUCCESS) {
+    printf("Last element removed.\n");
+}
+```
 
 ---
 ## vector_insert
 
-Inserts an element before the specified position.
+```c
+int vector_insert(Vector *vec, void *data, size_t pos);
+```
 
-Elements after the insertion point are shifted one position to the right.
+Inserts an element at the specified position in the vector.
+
+Elements at and after the specified position are shifted one position to the right. If the vector has reached its allocated capacity, the capacity is automatically increased before the element is inserted.
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `vec` | Pointer to the vector. |
+| `data` | Pointer to the element to be copied into the vector. |
+| `pos` | Zero-based index at which the element is to be inserted. Valid values are in the range `[0, size]`. |
+
+### Returns
+
+| Value | Description |
+|------|-------------|
+| `VECTOR_SUCCESS` | The element was inserted successfully. |
+| `VECTOR_ERROR_NULL_POINTER` | `vec` is `NULL`. |
+| `VECTOR_ERROR_INVALID_DATA` | `data` is `NULL`. |
+| `VECTOR_ERROR_INVALID_INDEX` | `pos` is outside the valid range. |
+| `VECTOR_ERROR_OUT_OF_MEMORY` | Memory allocation failed while expanding the vector. |
+| `VECTOR_ERROR_OVERFLOW` | Increasing the vector's capacity would cause an integer overflow. |
+
+### Example
 
 ```c
+int value = 42;
 vector_insert(vec, &value, 2);
 ```
 
 ---
 ## vector_erase
 
-Removes the element at the specified position.
+```c
+int vector_erase(Vector *vec, size_t pos);
+```
 
-Remaining elements are shifted left.
+Removes the element at the specified position from the vector.
+
+Elements after the specified position are shifted one position to the left. This operation decreases the size of the vector by one but does not reduce its allocated capacity.
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `vec` | Pointer to the vector. |
+| `pos` | Zero-based index of the element to remove. |
+
+### Returns
+
+| Value | Description |
+|------|-------------|
+| `VECTOR_SUCCESS` | The element was removed successfully. |
+| `VECTOR_ERROR_NULL_POINTER` | `vec` is `NULL`. |
+| `VECTOR_ERROR_INVALID_INDEX` | `pos` is out of bounds. |
+
+### Example
 
 ```c
-vector_erase(vec, 3);
+vector_erase(vec, 2);
 ```
 
 ---
 ## vector_clear
 
-Removes all elements.
+```c
+int vector_clear(Vector *vec);
+```
 
-Allocated memory is preserved.
+Removes all elements from the vector.
 
-Capacity remains unchanged.
+This operation sets the size of the vector to zero but preserves its allocated capacity.
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `vec` | Pointer to the vector. |
+
+### Returns
+
+| Value | Description |
+|------|-------------|
+| `VECTOR_SUCCESS` | The vector was cleared successfully. |
+| `VECTOR_ERROR_NULL_POINTER` | `vec` is `NULL`. |
+
+### Example
+
+```c
+vector_clear(vec);
+```
 
 ---
 ## vector_reserve
 
-Ensures the vector has at least the requested capacity.
+```c
+int vector_reserve(Vector *vec, size_t new_capacity);
+```
 
-If the requested capacity is smaller than the current capacity, nothing happens.
+Increases the allocated capacity of the vector to at least `new_capacity`.
+
+If `new_capacity` is less than or equal to the current capacity, the vector is left unchanged.
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `vec` | Pointer to the vector. |
+| `new_capacity` | Minimum capacity to reserve for the vector. |
+
+### Returns
+
+| Value | Description |
+|------|-------------|
+| `VECTOR_SUCCESS` | The capacity was increased successfully, or no reallocation was necessary. |
+| `VECTOR_ERROR_NULL_POINTER` | `vec` is `NULL`. |
+| `VECTOR_ERROR_OUT_OF_MEMORY` | Memory allocation failed or the requested capacity is too large. |
+
+### Example
 
 ```c
-vector_reserve(vec, 1000);
+vector_reserve(vec, 100);
 ```
 
 ---
 ## vector_resize
 
-Changes the logical size of the vector.
+```c
+int vector_resize(Vector *vec, size_t new_size);
+```
 
-If the new size exceeds the current capacity, the vector is reallocated.
+Changes the size of the vector to `new_size`.
 
-**Note:** Newly added elements are **uninitialized**.
+If `new_size` is greater than the current capacity, the vector is automatically expanded to accommodate the requested size.
+
+> **NOTE:** If the vector is expanded, the newly added elements are **uninitialized**.
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `vec` | Pointer to the vector. |
+| `new_size` | The new size of the vector. |
+
+### Returns
+
+| Value | Description |
+|------|-------------|
+| `VECTOR_SUCCESS` | The vector was resized successfully. |
+| `VECTOR_ERROR_NULL_POINTER` | `vec` is `NULL`. |
+| `VECTOR_ERROR_OUT_OF_MEMORY` | Memory allocation failed while expanding the vector. |
+
+### Example
 
 ```c
 vector_resize(vec, 50);
@@ -280,9 +559,29 @@ vector_resize(vec, 50);
 ---
 ## vector_shrink_to_fit
 
-Reduces the allocated capacity to match the current size.
+```c
+int vector_shrink_to_fit(Vector *vec);
+```
 
-If the vector is empty, capacity is reduced to `DEFAULT_CAPACITY`.
+Reduces the allocated capacity of the vector to match its current size.
+
+If the vector is empty, its capacity is reduced to `DEFAULT_CAPACITY`.
+
+### Parameters
+
+| Name | Description |
+|------|-------------|
+| `vec` | Pointer to the vector. |
+
+### Returns
+
+| Value | Description |
+|------|-------------|
+| `VECTOR_SUCCESS` | The vector was shrunk successfully, or no reallocation was necessary. |
+| `VECTOR_ERROR_NULL_POINTER` | `vec` is `NULL`. |
+| `VECTOR_ERROR_OUT_OF_MEMORY` | Memory reallocation failed. |
+
+### Example
 
 ```c
 vector_shrink_to_fit(vec);
